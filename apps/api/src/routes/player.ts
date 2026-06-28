@@ -9,6 +9,17 @@ interface NameParams {
 }
 
 export const playerRoutes: FastifyPluginAsync = async (app) => {
+  // Batch lookup (one upstream call) — used by the watchlist dashboard.
+  app.get<{ Querystring: { names?: string } }>("/players", async (req) => {
+    const names = (req.query.names ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (names.length === 0) return { players: [] };
+    const profiles = await cops.getProfilesByName(names);
+    return { players: profiles.map(summarizeProfile) };
+  });
+
   // Live profile + whether we already track this player.
   app.get<{ Params: NameParams }>("/player/:name", async (req) => {
     const profile = await cops.getProfileByName(req.params.name);
