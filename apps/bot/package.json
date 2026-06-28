@@ -1,0 +1,18 @@
+{
+  "name": "@cops/bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Discord bot exposing Critical Ops stats via a /track slash command.",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "deploy": "tsx src/deploy-commands.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cops/core": "*",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.7"
+  }
+}

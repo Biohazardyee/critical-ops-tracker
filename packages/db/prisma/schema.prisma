@@ -1,0 +1,45 @@
+// Critical Ops Tracker — persistence layer.
+// SQLite by default for zero-config local dev. To use Postgres later, change
+// `provider` to "postgresql" and point DATABASE_URL at your database.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// A player we take periodic snapshots of, to build a local history.
+model TrackedPlayer {
+  /// Critical Ops userID (stored as string to be safe with large ids).
+  userId    String     @id
+  name      String
+  addedAt   DateTime   @default(now())
+  snapshots Snapshot[]
+}
+
+/// A point-in-time capture of a tracked player's headline stats.
+model Snapshot {
+  id            Int           @id @default(autoincrement())
+  player        TrackedPlayer @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  userId        String
+  takenAt       DateTime      @default(now())
+
+  level         Int
+  mmr           Int
+  rank          Int
+
+  // Career ranked totals at capture time (summed across seasons).
+  rankedKills   Int
+  rankedDeaths  Int
+  rankedAssists Int
+  rankedWins    Int
+  rankedLosses  Int
+
+  /// Full raw profile JSON, kept for future-proofing / re-deriving metrics.
+  raw           String
+
+  @@index([userId, takenAt])
+}

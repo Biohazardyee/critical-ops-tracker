@@ -1,0 +1,31 @@
+{
+  "name": "critical-ops-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A Critical Ops player tracker (web + Discord bot) built on the public Critical Force API.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w @cops/api",
+    "dev:web": "npm run dev -w @cops/web",
+    "dev:bot": "npm run dev -w @cops/bot",
+    "worker": "npm run start -w @cops/worker",
+    "bot:deploy": "npm run deploy -w @cops/bot",
+    "db:generate": "npm run generate -w @cops/db",
+    "db:migrate": "npm run migrate -w @cops/db",
+    "db:studio": "npm run studio -w @cops/db",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

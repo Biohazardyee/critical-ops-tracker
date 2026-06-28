@@ -1,0 +1,22 @@
+{
+  "name": "@cops/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Periodically snapshots tracked players to build a local stat history.",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "once": "tsx src/index.ts --once",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cops/core": "*",
+    "@cops/db": "*",
+    "dotenv": "^16.4.7",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node-cron": "^3.0.11"
+  }
+}
