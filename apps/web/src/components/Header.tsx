@@ -27,6 +27,9 @@ export function Header() {
           <NavLink to="/compare" className={linkClass}>
             Compare
           </NavLink>
+          <NavLink to="/watchlist" className={linkClass}>
+            Watchlist
+          </NavLink>
         </nav>
       </div>
     </header>

@@ -26,7 +26,7 @@ export function SearchBar({ onSearch, loading, initial = "" }: Props) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="ENTER A CRITICAL OPS USERNAME…"
-        className="flex-1 border border-line bg-panel-2 px-4 py-3 uppercase tracking-wider outline-none placeholder:text-muted focus:border-accent"
+        className="flex-1 border border-line bg-panel-2 px-4 py-3 tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
       />
       <button
         type="submit"

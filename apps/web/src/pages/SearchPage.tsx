@@ -14,6 +14,7 @@ import { SeasonChart } from "../components/SeasonChart";
 import { HistoryChart } from "../components/HistoryChart";
 import { ServerStatus } from "../components/ServerStatus";
 import { Tabs } from "../components/Tabs";
+import { addRecent, getRecent, isWatched, toggleWatch } from "../storage";
 
 const TABS = [
   { id: "player", label: "Player" },
@@ -29,6 +30,7 @@ export function SearchPage() {
   const [history, setHistory] = useState<HistoryResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [tracking, setTracking] = useState(false);
+  const [watched, setWatched] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const search = useCallback(async (name: string) => {
@@ -42,6 +44,8 @@ export function SearchPage() {
       ]);
       setData(player);
       setHistory(hist);
+      addRecent(player.summary.name);
+      setWatched(isWatched(player.summary.name));
     } catch (err) {
       setData(null);
       setHistory(null);
@@ -94,7 +98,21 @@ export function SearchPage() {
 
           {!data && !error && !loading && (
             <div className="border border-dashed border-line p-10 text-center text-muted">
-              Search a player to see their stats, rank and season history.
+              <p>Search a player to see their stats, rank and season history.</p>
+              {getRecent().length > 0 && (
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                  <span className="text-xs uppercase tracking-wide">Recent:</span>
+                  {getRecent().map((name) => (
+                    <button
+                      key={name}
+                      onClick={() => setParams({ q: name })}
+                      className="border border-line bg-panel-2 px-3 py-1 text-xs text-white transition hover:border-accent"
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -131,7 +149,17 @@ export function SearchPage() {
                 </section>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => setWatched(toggleWatch(data.summary.name))}
+                  className={`border px-4 py-2 text-sm font-semibold uppercase tracking-wider transition ${
+                    watched
+                      ? "border-accent text-accent"
+                      : "border-line bg-panel-2 hover:border-accent"
+                  }`}
+                >
+                  {watched ? "★ Watchlisted" : "☆ Watchlist"}
+                </button>
                 {data.tracked ? (
                   <span className="text-sm uppercase tracking-wide text-online">
                     ✓ This player is being tracked

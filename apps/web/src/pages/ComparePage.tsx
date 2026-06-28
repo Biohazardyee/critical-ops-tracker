@@ -119,13 +119,13 @@ export function ComparePage() {
           value={inA}
           onChange={(e) => setInA(e.target.value)}
           placeholder="PLAYER 1"
-          className="flex-1 border border-line bg-panel-2 px-4 py-3 uppercase tracking-wider outline-none placeholder:text-muted focus:border-accent"
+          className="flex-1 border border-line bg-panel-2 px-4 py-3 tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
         />
         <input
           value={inB}
           onChange={(e) => setInB(e.target.value)}
           placeholder="PLAYER 2"
-          className="flex-1 border border-line bg-panel-2 px-4 py-3 uppercase tracking-wider outline-none placeholder:text-muted focus:border-accent"
+          className="flex-1 border border-line bg-panel-2 px-4 py-3 tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
         />
         <button
           type="submit"

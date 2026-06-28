@@ -63,6 +63,11 @@ export const trackPlayer = (name: string): Promise<PlayerResponse> =>
 
 export const getServers = (): Promise<ServerRow[]> => getJson(`/servers`);
 
+export const getPlayers = (
+  names: string[],
+): Promise<{ players: ProfileSummary[] }> =>
+  getJson(`/players?names=${encodeURIComponent(names.join(","))}`);
+
 export const getLeaderboard = (
   mode: LeaderboardMode,
   limit = 100,

@@ -3,6 +3,7 @@ import { Header } from "./components/Header";
 import { SearchPage } from "./pages/SearchPage";
 import { LeaderboardPage } from "./pages/LeaderboardPage";
 import { ComparePage } from "./pages/ComparePage";
+import { WatchlistPage } from "./pages/WatchlistPage";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="/" element={<SearchPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/compare" element={<ComparePage />} />
+          <Route path="/watchlist" element={<WatchlistPage />} />
         </Routes>
       </main>
     </div>

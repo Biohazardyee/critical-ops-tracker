@@ -95,7 +95,7 @@ export function LeaderboardPage() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="FIND A PLAYER OR CLAN…"
-        className="w-full border border-line bg-panel-2 px-4 py-2.5 text-sm uppercase tracking-wider outline-none placeholder:text-muted focus:border-accent"
+        className="w-full border border-line bg-panel-2 px-4 py-2.5 text-sm tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
       />
 
       {error && <p className="text-danger">{error}</p>}
