@@ -120,7 +120,10 @@ services:
     image: cloudflare/cloudflared:latest
     profiles: ["cloudflared"]
     restart: unless-stopped
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    # Token via TUNNEL_TOKEN env (clearer failure if unset than the --token flag).
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
     depends_on:
       - web
 
