@@ -3,11 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Critical Ops Tracker — Stats, Ranks &amp; Leaderboard</title>
+    <meta
+      name="description"
+      content="Free Critical Ops tracker: look up any player's stats, rank &amp; MMR, K/D and season history, plus the global leaderboard — Elite Ops, Ranked, Kills and Clans."
+    />
+    <meta
+      name="keywords"
+      content="Critical Ops tracker, cops tracker, Critical Ops stats, Critical Ops leaderboard, Critical Ops rank, Critical Ops MMR, C-Ops tracker"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://cops.melodia.cloud/" />
     <meta name="theme-color" content="#ff6a1a" />
-    <meta name="description" content="Critical Ops player stats, ranks & history." />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Critical Ops Tracker" />
+    <meta
+      property="og:title"
+      content="Critical Ops Tracker — Stats, Ranks &amp; Leaderboard"
+    />
+    <meta
+      property="og:description"
+      content="Look up Critical Ops player stats, rank &amp; MMR, K/D and season history, plus the global leaderboard."
+    />
+    <meta property="og:url" content="https://cops.melodia.cloud/" />
+    <meta property="og:image" content="https://cops.melodia.cloud/og.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Critical Ops Tracker — Stats, Ranks &amp; Leaderboard"
+    />
+    <meta
+      name="twitter:description"
+      content="Look up Critical Ops player stats, rank &amp; MMR, K/D and the global leaderboard."
+    />
+    <meta name="twitter:image" content="https://cops.melodia.cloud/og.svg" />
+
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon.svg" />
-    <title>Critical Ops Tracker</title>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Critical Ops Tracker",
+        "alternateName": "COPS Tracker",
+        "url": "https://cops.melodia.cloud/",
+        "description": "Critical Ops player stats, ranks, MMR and leaderboard tracker.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://cops.melodia.cloud/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

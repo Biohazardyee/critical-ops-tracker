@@ -20,6 +20,7 @@ import { HistoryChart } from "../components/HistoryChart";
 import { ServerStatus } from "../components/ServerStatus";
 import { Tabs } from "../components/Tabs";
 import { addRecent, getRecent, isWatched, toggleWatch } from "../storage";
+import { useSeo } from "../seo";
 
 export function SearchPage() {
   const { t } = useI18n();
@@ -39,6 +40,15 @@ export function SearchPage() {
   const [watched, setWatched] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useSeo(
+    data
+      ? `${data.summary.name} — Critical Ops Stats & Rank | COPS Tracker`
+      : undefined,
+    data
+      ? `${data.summary.name}: ${data.summary.rank.name}, MMR ${data.summary.mmr}, K/D ${data.summary.career.ranked.kd}. Critical Ops stats, ranks & season history.`
+      : undefined,
+  );
 
   const search = useCallback(async (name: string) => {
     setLoading(true);
@@ -92,6 +102,17 @@ export function SearchPage() {
         <ServerStatus />
       ) : (
         <>
+          {!data && (
+            <div className="py-2 text-center">
+              <h1 className="font-display text-3xl font-bold uppercase tracking-wide sm:text-4xl">
+                <span className="text-accent">Critical Ops</span> Stats Tracker
+              </h1>
+              <p className="mx-auto mt-2 max-w-2xl text-sm text-muted">
+                {t("home.intro")}
+              </p>
+            </div>
+          )}
+
           <SearchBar
             onSearch={(name) => setParams(name ? { q: name } : {})}
             loading={loading}

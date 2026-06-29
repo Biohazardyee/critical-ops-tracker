@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#ff6a1a" stop-opacity="0.18" />
+      <stop offset="60%" stop-color="#ff6a1a" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#0a0c10" />
+  <rect width="1200" height="630" fill="url(#glow)" />
+
+  <!-- reticle mark -->
+  <g transform="translate(250 315)">
+    <circle r="120" fill="none" stroke="#ff6a1a" stroke-width="20" />
+    <g stroke="#ff6a1a" stroke-width="20" stroke-linecap="round">
+      <line x1="0" y1="-150" x2="0" y2="-104" />
+      <line x1="0" y1="150" x2="0" y2="104" />
+      <line x1="-150" y1="0" x2="-104" y2="0" />
+      <line x1="150" y1="0" x2="104" y2="0" />
+    </g>
+    <circle r="32" fill="#ff6a1a" />
+  </g>
+
+  <!-- wordmark -->
+  <g font-family="'Segoe UI', Arial, sans-serif" font-weight="700">
+    <text x="470" y="290" font-size="78" fill="#ff6a1a">CRITICAL OPS</text>
+    <text x="470" y="372" font-size="78" fill="#e7ebf2">TRACKER</text>
+    <text x="474" y="438" font-size="32" font-weight="600" fill="#7d8896" letter-spacing="2">
+      STATS · RANKS · MMR · LEADERBOARD
+    </text>
+  </g>
+</svg>

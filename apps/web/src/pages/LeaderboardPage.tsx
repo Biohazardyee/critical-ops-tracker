@@ -12,6 +12,7 @@ import { getLeaderboard, type LeaderboardResponse } from "../api";
 import { Tabs } from "../components/Tabs";
 import { cleanName } from "../ranks";
 import { useI18n } from "../i18n";
+import { useSeo } from "../seo";
 
 const PAGE_SIZE = 50;
 
@@ -24,6 +25,10 @@ const rankClass = (rank: number): string =>
 
 export function LeaderboardPage() {
   const { t } = useI18n();
+  useSeo(
+    "Critical Ops Leaderboard — Top Players & Clans | COPS Tracker",
+    "Browse the Critical Ops global leaderboard: top players by Elite rating, ranked kills, all-time kills, and the best clans.",
+  );
   const [mode, setMode] = useState<LeaderboardMode>("elite");
   const [data, setData] = useState<LeaderboardResponse | null>(null);
   const [query, setQuery] = useState("");

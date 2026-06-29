@@ -19,6 +19,8 @@ const dict = {
     "tab.player": "Player",
     "tab.servers": "Servers",
     "search.placeholder": "Enter a Critical Ops username…",
+    "home.intro":
+      "Look up any Critical Ops player's rank, MMR, K/D and season history — and browse the global Elite Ops, Ranked, Kills and Clan leaderboards.",
     "search.empty": "Search a player to see their stats, rank and season history.",
     "search.recent": "Recent:",
     "section.season": "Ranked by season",
@@ -59,6 +61,8 @@ const dict = {
     "tab.player": "Joueur",
     "tab.servers": "Serveurs",
     "search.placeholder": "Entre un pseudo Critical Ops…",
+    "home.intro":
+      "Consultez le rang, le MMR, le K/D et l'historique par saison de n'importe quel joueur Critical Ops — et explorez les classements Elite Ops, Ranked, Kills et Clans.",
     "search.empty":
       "Recherche un joueur pour voir ses stats, son rang et son historique.",
     "search.recent": "Récents :",

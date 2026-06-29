@@ -5,6 +5,7 @@ import { getPlayer } from "../api";
 import { Avatar } from "../components/Avatar";
 import { rankImage } from "../ranks";
 import { useI18n } from "../i18n";
+import { useSeo } from "../seo";
 
 const pct = (n: number): string => `${(n * 100).toFixed(1)}%`;
 
@@ -67,6 +68,10 @@ function CompareRow({
 
 export function ComparePage() {
   const { t } = useI18n();
+  useSeo(
+    "Compare Critical Ops Players — Head to Head | COPS Tracker",
+    "Compare two Critical Ops players side by side: rank, MMR, K/D, KDA and win rate.",
+  );
   const [params, setParams] = useSearchParams();
   const a = params.get("a") ?? "";
   const b = params.get("b") ?? "";
