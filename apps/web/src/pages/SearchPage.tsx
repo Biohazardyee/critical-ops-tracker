@@ -4,9 +4,13 @@ import {
   getHistory,
   getPlayer,
   trackPlayer,
+  followPlayer,
+  unfollowPlayer,
   type HistoryResponse,
   type PlayerResponse,
 } from "../api";
+import { useI18n } from "../i18n";
+import { getToken } from "../notifications";
 import { SearchBar } from "../components/SearchBar";
 import { PlayerHeader } from "../components/PlayerHeader";
 import { StatCard } from "../components/StatCard";
@@ -17,14 +21,15 @@ import { ServerStatus } from "../components/ServerStatus";
 import { Tabs } from "../components/Tabs";
 import { addRecent, getRecent, isWatched, toggleWatch } from "../storage";
 
-const TABS = [
-  { id: "player", label: "Player" },
-  { id: "servers", label: "Servers" },
-];
-
 export function SearchPage() {
+  const { t } = useI18n();
   const [params, setParams] = useSearchParams();
   const q = params.get("q") ?? "";
+
+  const TABS = [
+    { id: "player", label: t("tab.player") },
+    { id: "servers", label: t("tab.servers") },
+  ];
 
   const [tab, setTab] = useState("player");
   const [data, setData] = useState<PlayerResponse | null>(null);
@@ -101,10 +106,12 @@ export function SearchPage() {
 
           {!data && !error && !loading && (
             <div className="border border-dashed border-line p-10 text-center text-muted">
-              <p>Search a player to see their stats, rank and season history.</p>
+              <p>{t("search.empty")}</p>
               {getRecent().length > 0 && (
                 <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                  <span className="text-xs uppercase tracking-wide">Recent:</span>
+                  <span className="text-xs uppercase tracking-wide">
+                    {t("search.recent")}
+                  </span>
                   {getRecent().map((name) => (
                     <button
                       key={name}
@@ -136,7 +143,7 @@ export function SearchPage() {
               <div className="grid gap-6 lg:grid-cols-2">
                 <section className="clip-corner border border-line bg-panel p-6">
                   <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted">
-                    Ranked by season
+                    {t("section.season")}
                   </h3>
                   <SeasonChart
                     seasons={data.summary.seasons}
@@ -146,7 +153,7 @@ export function SearchPage() {
 
                 <section className="clip-corner border border-line bg-panel p-6">
                   <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted">
-                    MMR history
+                    {t("section.mmr")}
                   </h3>
                   <HistoryChart
                     snapshots={history?.snapshots ?? []}
@@ -157,18 +164,23 @@ export function SearchPage() {
 
               <div className="flex flex-wrap items-center gap-3">
                 <button
-                  onClick={() => setWatched(toggleWatch(data.summary.name))}
+                  onClick={() => {
+                    const next = toggleWatch(data.summary.name);
+                    setWatched(next);
+                    const fn = next ? followPlayer : unfollowPlayer;
+                    fn(getToken(), data.summary.name).catch(() => {});
+                  }}
                   className={`border px-4 py-2 text-sm font-semibold uppercase tracking-wider transition ${
                     watched
                       ? "border-accent text-accent"
                       : "border-line bg-panel-2 hover:border-accent"
                   }`}
                 >
-                  {watched ? "★ Watchlisted" : "☆ Watchlist"}
+                  {watched ? t("btn.watchlisted") : t("btn.watchlist")}
                 </button>
                 {data.tracked ? (
                   <span className="text-sm uppercase tracking-wide text-online">
-                    ✓ This player is being tracked
+                    {t("status.tracked")}
                   </span>
                 ) : (
                   <button
@@ -176,7 +188,7 @@ export function SearchPage() {
                     disabled={tracking}
                     className="border border-line bg-panel-2 px-4 py-2 text-sm font-semibold uppercase tracking-wider transition hover:border-accent disabled:opacity-50"
                   >
-                    {tracking ? "Adding…" : "Track this player"}
+                    {tracking ? t("btn.tracking") : t("btn.track")}
                   </button>
                 )}
               </div>

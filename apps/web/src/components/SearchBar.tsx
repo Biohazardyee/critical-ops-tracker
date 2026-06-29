@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useI18n } from "../i18n";
 
 interface Props {
   onSearch: (name: string) => void;
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export function SearchBar({ onSearch, loading, initial = "" }: Props) {
+  const { t } = useI18n();
   const [value, setValue] = useState(initial);
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function SearchBar({ onSearch, loading, initial = "" }: Props) {
       <input
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="ENTER A CRITICAL OPS USERNAME…"
+        placeholder={t("search.placeholder")}
         className="flex-1 border border-line bg-panel-2 px-4 py-3 tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
       />
       <button
@@ -33,7 +35,7 @@ export function SearchBar({ onSearch, loading, initial = "" }: Props) {
         disabled={loading}
         className="clip-corner bg-accent px-6 py-3 font-semibold uppercase tracking-wider text-black transition hover:bg-accent-soft disabled:opacity-50"
       >
-        {loading ? "…" : "Search"}
+        {loading ? "…" : t("common.search")}
       </button>
     </form>
   );

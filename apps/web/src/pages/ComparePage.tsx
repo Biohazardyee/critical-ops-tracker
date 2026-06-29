@@ -4,6 +4,7 @@ import type { ProfileSummary } from "@cops/core";
 import { getPlayer } from "../api";
 import { Avatar } from "../components/Avatar";
 import { rankImage } from "../ranks";
+import { useI18n } from "../i18n";
 
 const pct = (n: number): string => `${(n * 100).toFixed(1)}%`;
 
@@ -65,6 +66,7 @@ function CompareRow({
 }
 
 export function ComparePage() {
+  const { t } = useI18n();
   const [params, setParams] = useSearchParams();
   const a = params.get("a") ?? "";
   const b = params.get("b") ?? "";
@@ -102,9 +104,9 @@ export function ComparePage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold uppercase tracking-wide">
-          Compare
+          {t("cmp.title")}
         </h1>
-        <p className="text-muted">Put two players head to head.</p>
+        <p className="text-muted">{t("cmp.subtitle")}</p>
       </div>
 
       <form
@@ -118,13 +120,13 @@ export function ComparePage() {
         <input
           value={inA}
           onChange={(e) => setInA(e.target.value)}
-          placeholder="PLAYER 1"
+          placeholder={t("cmp.p1")}
           className="flex-1 border border-line bg-panel-2 px-4 py-3 tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
         />
         <input
           value={inB}
           onChange={(e) => setInB(e.target.value)}
-          placeholder="PLAYER 2"
+          placeholder={t("cmp.p2")}
           className="flex-1 border border-line bg-panel-2 px-4 py-3 tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
         />
         <button
@@ -132,7 +134,7 @@ export function ComparePage() {
           disabled={loading}
           className="clip-corner bg-accent px-6 py-3 font-semibold uppercase tracking-wider text-black transition hover:bg-accent-soft disabled:opacity-50"
         >
-          {loading ? "…" : "Compare"}
+          {loading ? "…" : t("cmp.cta")}
         </button>
       </form>
 

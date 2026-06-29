@@ -11,6 +11,7 @@ import type {
 import { getLeaderboard, type LeaderboardResponse } from "../api";
 import { Tabs } from "../components/Tabs";
 import { cleanName } from "../ranks";
+import { useI18n } from "../i18n";
 
 const PAGE_SIZE = 50;
 
@@ -22,6 +23,7 @@ const rankClass = (rank: number): string =>
       : "text-muted";
 
 export function LeaderboardPage() {
+  const { t } = useI18n();
   const [mode, setMode] = useState<LeaderboardMode>("elite");
   const [data, setData] = useState<LeaderboardResponse | null>(null);
   const [query, setQuery] = useState("");
@@ -80,9 +82,9 @@ export function LeaderboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold uppercase tracking-wide">
-          Leaderboard
+          {t("lb.title")}
         </h1>
-        <p className="text-muted">Top players and clans in Critical Ops.</p>
+        <p className="text-muted">{t("lb.subtitle")}</p>
       </div>
 
       <Tabs
@@ -94,22 +96,22 @@ export function LeaderboardPage() {
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="FIND A PLAYER OR CLAN…"
+        placeholder={t("lb.find")}
         className="w-full border border-line bg-panel-2 px-4 py-2.5 text-sm tracking-wider outline-none placeholder:uppercase placeholder:text-muted focus:border-accent"
       />
 
       {error && <p className="text-danger">{error}</p>}
-      {loading && <p className="text-muted">Loading…</p>}
+      {loading && <p className="text-muted">{t("common.loading")}</p>}
 
       {data && !loading && (
         <>
           <div className="flex items-center justify-between text-xs uppercase tracking-wide text-muted">
             <span>
               {filtered.length === 0
-                ? `No match for “${query}”`
-                : `${start + 1}–${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length}`}
+                ? `${t("lb.noMatch")} “${query}”`
+                : `${start + 1}–${Math.min(start + PAGE_SIZE, filtered.length)} / ${filtered.length}`}
             </span>
-            {data.count >= 1000 && <span>source caps at 1000</span>}
+            {data.count >= 1000 && <span>{t("lb.cap")}</span>}
           </div>
 
           {shown.length > 0 && (
@@ -127,17 +129,17 @@ export function LeaderboardPage() {
                 disabled={current === 0}
                 className="border border-line bg-panel-2 px-3 py-1.5 text-sm font-semibold uppercase tracking-wider transition hover:border-accent disabled:opacity-40"
               >
-                ‹ Prev
+                {t("lb.prev")}
               </button>
               <span className="tabular text-sm text-muted">
-                Page {current + 1} / {pageCount}
+                {t("lb.page")} {current + 1} / {pageCount}
               </span>
               <button
                 onClick={() => setPage(current + 1)}
                 disabled={current >= pageCount - 1}
                 className="border border-line bg-panel-2 px-3 py-1.5 text-sm font-semibold uppercase tracking-wider transition hover:border-accent disabled:opacity-40"
               >
-                Next ›
+                {t("lb.next")}
               </button>
             </div>
           )}
