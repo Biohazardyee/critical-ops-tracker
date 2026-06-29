@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { CopsClient, LEADERBOARD_MODES, type LeaderboardMode } from "@cops/core";
+import { cached } from "../cache.js";
 
 const cops = new CopsClient();
 const MODES = new Set<string>(LEADERBOARD_MODES);
@@ -14,7 +15,9 @@ export const leaderboardRoutes: FastifyPluginAsync = async (app) => {
           error: `Unknown leaderboard mode "${mode}". Valid: ${[...MODES].join(", ")}`,
         });
       }
-      const entries = await cops.getLeaderboard(mode as LeaderboardMode);
+      const entries = await cached(`lb:${mode}`, () =>
+        cops.getLeaderboard(mode as LeaderboardMode),
+      );
       const limit = Number(req.query.limit ?? 100);
       const sliced =
         Number.isFinite(limit) && limit > 0 ? entries.slice(0, limit) : entries;

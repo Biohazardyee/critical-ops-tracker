@@ -1,12 +1,17 @@
 import type { FastifyPluginAsync } from "fastify";
-import { CopsClient, summarizeProfile } from "@cops/core";
+import { CopsClient, summarizeProfile, type RawProfile } from "@cops/core";
 import { prisma, recordSnapshot, getSnapshots } from "@cops/db";
+import { cached } from "../cache.js";
 
 const cops = new CopsClient();
 
 interface NameParams {
   name: string;
 }
+
+// Cached profile lookup (read paths). Tracking bypasses this for fresh data.
+const profileByName = (name: string): Promise<RawProfile> =>
+  cached(`profile:${name.toLowerCase()}`, () => cops.getProfileByName(name));
 
 export const playerRoutes: FastifyPluginAsync = async (app) => {
   // Batch lookup (one upstream call) — used by the watchlist dashboard.
@@ -16,13 +21,14 @@ export const playerRoutes: FastifyPluginAsync = async (app) => {
       .map((s) => s.trim())
       .filter(Boolean);
     if (names.length === 0) return { players: [] };
-    const profiles = await cops.getProfilesByName(names);
+    const key = `players:${[...names].map((n) => n.toLowerCase()).sort().join(",")}`;
+    const profiles = await cached(key, () => cops.getProfilesByName(names));
     return { players: profiles.map(summarizeProfile) };
   });
 
   // Live profile + whether we already track this player.
   app.get<{ Params: NameParams }>("/player/:name", async (req) => {
-    const profile = await cops.getProfileByName(req.params.name);
+    const profile = await profileByName(req.params.name);
     const summary = summarizeProfile(profile);
     const tracked = await prisma.trackedPlayer.findUnique({
       where: { userId: String(summary.userId) },
@@ -32,7 +38,7 @@ export const playerRoutes: FastifyPluginAsync = async (app) => {
 
   // Locally stored snapshot history for this player.
   app.get<{ Params: NameParams }>("/player/:name/history", async (req) => {
-    const profile = await cops.getProfileByName(req.params.name);
+    const profile = await profileByName(req.params.name);
     const userId = String(profile.basicInfo.userID);
     const snapshots = await getSnapshots(userId);
     return {
