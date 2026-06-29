@@ -92,8 +92,21 @@ services:
       api:
         condition: service_healthy
 
-  # Optional reverse proxy with automatic HTTPS (Let's Encrypt).
-  # Enable with: docker compose --profile proxy up -d
+  # Optional Cloudflare Tunnel connector (recommended: no open ports, TLS at edge).
+  # Enable with: docker compose --profile cloudflared up -d
+  # 1. Create a tunnel in the Cloudflare dashboard, copy its token into
+  #    CLOUDFLARE_TUNNEL_TOKEN in .env.
+  # 2. Add a Public Hostname route: cops.melodia.cloud -> http://web:80
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: ["cloudflared"]
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - web
+
+  # Alternative: reverse proxy with automatic HTTPS (Let's Encrypt) if you are
+  # NOT using Cloudflare Tunnel. Enable with: docker compose --profile proxy up -d
   # Requires DOMAIN set in .env, its DNS A record pointing here, and 80/443 free.
   caddy:
     image: caddy:2-alpine
