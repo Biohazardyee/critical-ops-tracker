@@ -1,0 +1,92 @@
+name: cops-tracker
+
+# Shared config for the Node services (api / worker / bot / migrate).
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: cops-backend:latest
+  env_file: .env
+  environment:
+    NODE_ENV: production
+    # Inside the network the DB host is "db" (overrides the .env localhost URL).
+    DATABASE_URL: postgresql://${POSTGRES_USER:-cops}:${POSTGRES_PASSWORD:-cops}@db:5432/${POSTGRES_DB:-cops}?schema=public
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cops}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cops}
+      POSTGRES_DB: ${POSTGRES_DB:-cops}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cops} -d ${POSTGRES_DB:-cops}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-shot: create/update the schema, then exit.
+  migrate:
+    <<: *backend
+    command: ["npm", "run", "db:push"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    <<: *backend
+    command: ["npm", "run", "start", "-w", "@cops/api"]
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:8787/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    <<: *backend
+    command: ["npm", "run", "start", "-w", "@cops/worker"]
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  # Optional — needs DISCORD_* in .env. Start with: docker compose --profile bot up -d
+  bot:
+    <<: *backend
+    command: ["npm", "run", "start", "-w", "@cops/bot"]
+    profiles: ["bot"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: cops-web:latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:
