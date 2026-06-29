@@ -15,6 +15,9 @@ dist/
 *.db-journal
 packages/db/prisma/*.db
 
+# postgres backups (db-backup service)
+backups/
+
 # prisma generated client (regenerated via `npm run db:generate`)
 packages/db/generated/
 

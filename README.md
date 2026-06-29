@@ -102,6 +102,12 @@ docker compose run --rm bot npm run deploy -w @cops/bot   # register /track once
 docker compose --profile cloudflared up -d    # Cloudflare Tunnel (needs CLOUDFLARE_TUNNEL_TOKEN)
 ```
 
+To make a profile part of the default `docker compose up`, set it in `.env`:
+
+```bash
+COMPOSE_PROFILES=cloudflared      # (or "cloudflared,bot") — now plain `up -d` includes it
+```
+
 ### Updating a running server
 
 ```bash
@@ -117,6 +123,17 @@ docker compose run --rm migrate           # only if the Prisma schema changed
   (no host port to open). See `CLOUDFLARE_TUNNEL_TOKEN` in `.env`.
 - `migrate` is a one-shot service (`prisma db push`) that api/worker wait on; Postgres
   data persists in the `pgdata` volume.
+
+### Backups
+
+The `db-backup` service dumps Postgres daily into `./backups` (retention: 7 days /
+4 weeks / 6 months). Restore the latest dump:
+
+```bash
+ls -t backups/daily                                   # find the dump you want
+gunzip -c backups/daily/<file>.sql.gz | \
+  docker compose exec -T db psql -U cops -d cops       # restore into the DB
+```
 
 ## API endpoints
 
