@@ -5,11 +5,14 @@ import { getPlayers, unfollowPlayer } from "../api";
 import { getWatchlist, removeWatch } from "../storage";
 import { getToken } from "../notifications";
 import { useI18n } from "../i18n";
+import { useSeo } from "../seo";
 import { Avatar } from "../components/Avatar";
 import { rankImage } from "../ranks";
 
 export function WatchlistPage() {
   const { t } = useI18n();
+  // Personal page — no SEO value, keep it out of the index.
+  useSeo("Watchlist | Critical Ops Tracker", undefined, true);
   const [names, setNames] = useState<string[]>(getWatchlist());
   const [players, setPlayers] = useState<ProfileSummary[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -78,7 +81,7 @@ export function WatchlistPage() {
                   ×
                 </button>
                 <Link
-                  to={`/?q=${encodeURIComponent(p.name)}`}
+                  to={`/player/${encodeURIComponent(p.name)}`}
                   className="flex items-center gap-3"
                 >
                   <Avatar name={p.name} color={p.rank.color} size={44} />

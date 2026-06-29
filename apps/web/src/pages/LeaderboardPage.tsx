@@ -194,7 +194,7 @@ function PlayerTable({ entries }: { entries: PlayerLeaderboardEntry[] }) {
             key={e.rank}
             className={`${ROW} cursor-pointer`}
             onClick={() =>
-              navigate(`/?q=${encodeURIComponent(cleanName(e.name))}`)
+              navigate(`/player/${encodeURIComponent(cleanName(e.name))}`)
             }
           >
             <td className={`${TD} font-bold ${rankClass(e.rank)}`}>{e.rank}</td>
@@ -228,7 +228,7 @@ function EliteTable({ entries }: { entries: EliteLeaderboardEntry[] }) {
             key={e.rank}
             className={`${ROW} cursor-pointer`}
             onClick={() =>
-              navigate(`/?q=${encodeURIComponent(cleanName(e.name))}`)
+              navigate(`/player/${encodeURIComponent(cleanName(e.name))}`)
             }
           >
             <td className={`${TD} font-bold ${rankClass(e.rank)}`}>{e.rank}</td>

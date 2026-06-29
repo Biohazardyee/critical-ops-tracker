@@ -13,6 +13,7 @@ export default function App() {
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         <Routes>
           <Route path="/" element={<SearchPage />} />
+          <Route path="/player/:name" element={<SearchPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/watchlist" element={<WatchlistPage />} />

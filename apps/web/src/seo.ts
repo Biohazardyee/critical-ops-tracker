@@ -42,7 +42,11 @@ function setCanonical(href: string): void {
  * The canonical MUST be per-route — a single static canonical makes every SPA
  * route look like a duplicate of "/" (Bing refuses to index those).
  */
-export function useSeo(title?: string, description?: string): void {
+export function useSeo(
+  title?: string,
+  description?: string,
+  noindex = false,
+): void {
   useEffect(() => {
     const url = ORIGIN + window.location.pathname + window.location.search;
     const finalTitle = title ?? DEFAULT_TITLE;
@@ -50,6 +54,7 @@ export function useSeo(title?: string, description?: string): void {
 
     document.title = finalTitle;
     setMetaByName("description", finalDesc);
+    setMetaByName("robots", noindex ? "noindex, nofollow" : "index, follow");
     setCanonical(url);
     setMetaByProperty("og:url", url);
     setMetaByProperty("og:title", finalTitle);
@@ -58,8 +63,9 @@ export function useSeo(title?: string, description?: string): void {
     return () => {
       document.title = DEFAULT_TITLE;
       setMetaByName("description", DEFAULT_DESC);
+      setMetaByName("robots", "index, follow");
       setCanonical(ORIGIN + "/");
       setMetaByProperty("og:url", ORIGIN + "/");
     };
-  }, [title, description]);
+  }, [title, description, noindex]);
 }

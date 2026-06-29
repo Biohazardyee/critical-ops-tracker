@@ -85,7 +85,7 @@ export function NotificationsBell() {
               events.map((e) => (
                 <Link
                   key={e.id}
-                  to={`/?q=${encodeURIComponent(cleanName(e.name))}`}
+                  to={`/player/${encodeURIComponent(cleanName(e.name))}`}
                   onClick={() => setOpen(false)}
                   className="flex items-center justify-between gap-2 border-b border-line/50 px-4 py-2 text-sm transition hover:bg-panel"
                 >

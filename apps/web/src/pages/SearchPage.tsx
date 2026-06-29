@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   getHistory,
   getPlayer,
@@ -24,8 +24,11 @@ import { useSeo } from "../seo";
 
 export function SearchPage() {
   const { t } = useI18n();
-  const [params, setParams] = useSearchParams();
-  const q = params.get("q") ?? "";
+  const navigate = useNavigate();
+  const { name: routeName } = useParams();
+  const [searchParams] = useSearchParams();
+  // Player name comes from the clean /player/:name path (legacy /?q= still works).
+  const q = routeName ?? searchParams.get("q") ?? "";
 
   const TABS = [
     { id: "player", label: t("tab.player") },
@@ -81,6 +84,14 @@ export function SearchPage() {
     }
   }, [q, search]);
 
+  // Redirect legacy /?q=Name links to the clean /player/Name URL.
+  useEffect(() => {
+    const legacy = searchParams.get("q");
+    if (legacy && !routeName) {
+      navigate(`/player/${encodeURIComponent(legacy)}`, { replace: true });
+    }
+  }, [searchParams, routeName, navigate]);
+
   async function track() {
     if (!data) return;
     setTracking(true);
@@ -114,7 +125,9 @@ export function SearchPage() {
           )}
 
           <SearchBar
-            onSearch={(name) => setParams(name ? { q: name } : {})}
+            onSearch={(name) =>
+              navigate(name ? `/player/${encodeURIComponent(name)}` : "/")
+            }
             loading={loading}
             initial={q}
           />
@@ -136,7 +149,9 @@ export function SearchPage() {
                   {getRecent().map((name) => (
                     <button
                       key={name}
-                      onClick={() => setParams({ q: name })}
+                      onClick={() =>
+                        navigate(`/player/${encodeURIComponent(name)}`)
+                      }
                       className="border border-line bg-panel-2 px-3 py-1 text-xs text-white transition hover:border-accent"
                     >
                       {name}
