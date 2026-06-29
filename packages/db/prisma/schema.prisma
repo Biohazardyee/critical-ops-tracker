@@ -1,13 +1,13 @@
-// Critical Ops Tracker — persistence layer.
-// SQLite by default for zero-config local dev. To use Postgres later, change
-// `provider` to "postgresql" and point DATABASE_URL at your database.
+// Critical Ops Tracker — persistence layer (PostgreSQL).
+// Schema is applied with `prisma db push` (see the `migrate` service in
+// docker-compose.yml and the db package scripts).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

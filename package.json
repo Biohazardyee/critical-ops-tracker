@@ -15,6 +15,7 @@
     "worker": "npm run start -w @cops/worker",
     "bot:deploy": "npm run deploy -w @cops/bot",
     "db:generate": "npm run generate -w @cops/db",
+    "db:push": "npm run push -w @cops/db",
     "db:migrate": "npm run migrate -w @cops/db",
     "db:studio": "npm run studio -w @cops/db",
     "typecheck": "npm run typecheck --workspaces --if-present",
