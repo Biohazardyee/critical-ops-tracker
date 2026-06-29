@@ -17,7 +17,13 @@ const PADR = 12;
 const PADT = 16;
 const PADB = 26;
 
-export function SeasonChart({ seasons }: { seasons: Seasons }) {
+export function SeasonChart({
+  seasons,
+  onSelectSeason,
+}: {
+  seasons: Seasons;
+  onSelectSeason?: (season: number) => void;
+}) {
   const [metric, setMetric] = useState<Metric>("kd");
   const gradId = useId();
 
@@ -105,9 +111,7 @@ export function SeasonChart({ seasons }: { seasons: Seasons }) {
 
         {data.map((s, i) => (
           <g key={s.season}>
-            <circle cx={x(i)} cy={y(val(i))} r={3} fill="var(--color-accent)">
-              <title>{`Season ${s.season} — ${fmt(val(i))} (${s.ranked.w}W-${s.ranked.l}L)`}</title>
-            </circle>
+            <circle cx={x(i)} cy={y(val(i))} r={3} fill="var(--color-accent)" />
             <text
               x={x(i)}
               y={H - 8}
@@ -117,6 +121,17 @@ export function SeasonChart({ seasons }: { seasons: Seasons }) {
             >
               S{s.season}
             </text>
+            {/* Larger transparent hit area: hover tooltip + click for details. */}
+            <circle
+              cx={x(i)}
+              cy={y(val(i))}
+              r={12}
+              fill="transparent"
+              style={{ cursor: onSelectSeason ? "pointer" : "default" }}
+              onClick={() => onSelectSeason?.(s.season)}
+            >
+              <title>{`Season ${s.season} — ${fmt(val(i))} (${s.ranked.w}W-${s.ranked.l}L) — click for details`}</title>
+            </circle>
           </g>
         ))}
       </svg>

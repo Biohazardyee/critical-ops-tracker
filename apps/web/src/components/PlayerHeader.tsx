@@ -8,6 +8,17 @@ export function PlayerHeader({ summary }: { summary: ProfileSummary }) {
       ? Math.min(100, Math.round((summary.xp.current / summary.xp.next) * 100))
       : 0;
   const rankImg = rankImage(summary.rank.id);
+  // Honest "standing": the API exposes a ladder position but no total player
+  // count, so we surface the position + a Top-N badge rather than a fake %.
+  const pos = summary.leaderboardPosition;
+  const standing =
+    pos > 0 && pos <= 10
+      ? "TOP 10"
+      : pos > 0 && pos <= 100
+        ? "TOP 100"
+        : pos > 0 && pos <= 1000
+          ? "TOP 1000"
+          : null;
 
   return (
     <div className="clip-corner border border-line bg-panel p-6">
@@ -27,6 +38,11 @@ export function PlayerHeader({ summary }: { summary: ProfileSummary }) {
               {summary.banned && (
                 <span className="bg-danger/20 px-2 py-0.5 text-sm text-danger">
                   Banned
+                </span>
+              )}
+              {standing && (
+                <span className="border border-accent/60 bg-accent/15 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-accent">
+                  {standing}
                 </span>
               )}
             </div>

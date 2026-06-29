@@ -11,6 +11,7 @@ import { SearchBar } from "../components/SearchBar";
 import { PlayerHeader } from "../components/PlayerHeader";
 import { StatCard } from "../components/StatCard";
 import { SeasonChart } from "../components/SeasonChart";
+import { SeasonDetailModal } from "../components/SeasonDetailModal";
 import { HistoryChart } from "../components/HistoryChart";
 import { ServerStatus } from "../components/ServerStatus";
 import { Tabs } from "../components/Tabs";
@@ -31,12 +32,14 @@ export function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [tracking, setTracking] = useState(false);
   const [watched, setWatched] = useState(false);
+  const [selectedSeason, setSelectedSeason] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const search = useCallback(async (name: string) => {
     setLoading(true);
     setError(null);
     setTab("player");
+    setSelectedSeason(null);
     try {
       const [player, hist] = await Promise.all([
         getPlayer(name),
@@ -135,7 +138,10 @@ export function SearchPage() {
                   <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted">
                     Ranked by season
                   </h3>
-                  <SeasonChart seasons={data.summary.seasons} />
+                  <SeasonChart
+                    seasons={data.summary.seasons}
+                    onSelectSeason={setSelectedSeason}
+                  />
                 </section>
 
                 <section className="clip-corner border border-line bg-panel p-6">
@@ -177,6 +183,16 @@ export function SearchPage() {
             </div>
           )}
         </>
+      )}
+
+      {data && selectedSeason !== null && (
+        <SeasonDetailModal
+          season={
+            data.summary.seasons.find((s) => s.season === selectedSeason) ??
+            data.summary.seasons[0]!
+          }
+          onClose={() => setSelectedSeason(null)}
+        />
       )}
     </div>
   );
