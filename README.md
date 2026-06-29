@@ -62,21 +62,61 @@ npm run bot:deploy   # register the /track slash command
 npm run dev:bot      # start the bot
 ```
 
-## Deploy with Docker
+## Run it with Docker
 
-One shared Node image (api / worker / bot) + an nginx image (web) + Postgres.
+Images: one shared Node image (`api` / `worker` / `bot` / one-shot `migrate`) +
+an nginx image (`web`) + Postgres. Set up the env once:
 
 ```bash
-cp .env.example .env        # set POSTGRES_PASSWORD (and DISCORD_* if using the bot)
-
-docker compose up -d --build         # db + migrate + api + worker + web
-docker compose --profile bot up -d   # also start the Discord bot (optional)
+cp .env.example .env   # POSTGRES_PASSWORD, WEB_PORT, CLOUDFLARE_TUNNEL_TOKEN, DISCORD_* as needed
 ```
 
-- Web UI → `http://<host>:8080` (nginx serves the UI and proxies `/api` to the api service).
-- `migrate` is a one-shot service that runs `prisma db push` before api/worker start.
-- Postgres data persists in the `pgdata` volume.
-- Put your own reverse proxy / TLS (Caddy, Traefik, nginx) in front of port 8080.
+### Everyday commands
+
+```bash
+# Start everything (builds images on first run)
+docker compose up -d --build
+
+# Rebuild + restart after a CODE change
+docker compose up -d --build            # or target one: ... --build api
+
+# Restart one service (no rebuild)
+docker compose restart api              # or worker / web
+
+# Apply a SCHEMA change (after editing prisma/schema.prisma)
+docker compose run --rm migrate         # runs `prisma db push`
+
+# Logs / status
+docker compose logs -f api worker
+docker compose ps
+
+# Stop (keep data)   |   Stop + wipe the database
+docker compose down  |   docker compose down -v
+```
+
+### Optional services (profiles)
+
+```bash
+docker compose --profile bot up -d            # Discord bot (needs DISCORD_*)
+docker compose run --rm bot npm run deploy -w @cops/bot   # register /track once
+docker compose --profile cloudflared up -d    # Cloudflare Tunnel (needs CLOUDFLARE_TUNNEL_TOKEN)
+```
+
+### Updating a running server
+
+```bash
+git pull
+docker compose up -d --build              # rebuild changed images & restart
+docker compose run --rm migrate           # only if the Prisma schema changed
+```
+
+### Access
+
+- Direct: `http://<host>:${WEB_PORT:-8080}` — nginx serves the SPA and proxies `/api`.
+- Via **Cloudflare Tunnel** (recommended): add a Public Hostname route → `http://web:80`
+  (no host port to open). See `CLOUDFLARE_TUNNEL_TOKEN` in `.env`.
+- `migrate` is a one-shot service (`prisma db push`) that api/worker wait on; Postgres
+  data persists in the `pgdata` volume.
 
 ## API endpoints
 
@@ -89,6 +129,9 @@ docker compose --profile bot up -d   # also start the Discord bot (optional)
 | POST   | `/api/player/:name/track`    | start tracking + take a snapshot   |
 | GET    | `/api/players?names=a,b`     | batch summaries (watchlist)        |
 | GET    | `/api/leaderboard/:mode`     | `elite` / `ranked` / `kills` / `clan` (supports `?limit=`) |
+| GET    | `/api/feed?token=…`          | notification events for a device token |
+| POST   | `/api/feed/follow`           | `{ token, name }` — follow a player |
+| POST   | `/api/feed/unfollow`         | `{ token, name }` — unfollow         |
 
 ## Useful scripts
 
