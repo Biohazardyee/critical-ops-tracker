@@ -68,6 +68,34 @@ export const getPlayers = (
 ): Promise<{ players: ProfileSummary[] }> =>
   getJson(`/players?names=${encodeURIComponent(names.join(","))}`);
 
+export interface FeedEvent {
+  id: number;
+  userId: string;
+  name: string;
+  at: string;
+  kind: "rank_up" | "rank_down" | "mmr";
+  oldRank: number;
+  newRank: number;
+  oldMmr: number;
+  newMmr: number;
+}
+
+const postJson = (path: string, body: unknown) =>
+  getJson(path, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+export const getFeed = (token: string): Promise<{ events: FeedEvent[] }> =>
+  getJson(`/feed?token=${encodeURIComponent(token)}`);
+
+export const followPlayer = (token: string, name: string): Promise<unknown> =>
+  postJson(`/feed/follow`, { token, name });
+
+export const unfollowPlayer = (token: string, name: string): Promise<unknown> =>
+  postJson(`/feed/unfollow`, { token, name });
+
 export const getLeaderboard = (
   mode: LeaderboardMode,
   limit = 100,

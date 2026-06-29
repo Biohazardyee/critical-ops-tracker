@@ -16,8 +16,68 @@ export async function recordSnapshot(profile: RawProfile) {
     update: { name: profile.basicInfo.name },
   });
 
-  return prisma.snapshot.create({
+  // Compare to the previous snapshot to emit a notification event on change.
+  const prev = await prisma.snapshot.findFirst({
+    where: { userId },
+    orderBy: { takenAt: "desc" },
+  });
+
+  const snapshot = await prisma.snapshot.create({
     data: { userId, ...metrics, raw: JSON.stringify(profile) },
+  });
+
+  if (prev) {
+    let kind: string | null = null;
+    if (metrics.rank !== prev.rank) {
+      kind = metrics.rank > prev.rank ? "rank_up" : "rank_down";
+    } else if (metrics.mmr !== prev.mmr) {
+      kind = "mmr";
+    }
+    if (kind) {
+      await prisma.rankEvent.create({
+        data: {
+          userId,
+          name: profile.basicInfo.name,
+          kind,
+          oldRank: prev.rank,
+          newRank: metrics.rank,
+          oldMmr: prev.mmr,
+          newMmr: metrics.mmr,
+        },
+      });
+    }
+  }
+
+  return snapshot;
+}
+
+/** Follow a player for notifications under a device token. */
+export async function followPlayer(token: string, profile: RawProfile) {
+  const userId = String(profile.basicInfo.userID);
+  return prisma.follow.upsert({
+    where: { token_userId: { token, userId } },
+    create: { token, userId, name: profile.basicInfo.name },
+    update: { name: profile.basicInfo.name },
+  });
+}
+
+/** Stop following a player under a device token. */
+export async function unfollowPlayer(token: string, userId: string) {
+  await prisma.follow.deleteMany({ where: { token, userId } });
+}
+
+/** Recent rank/MMR events for the players a token follows (newest first). */
+export async function getFeed(token: string, limit = 30) {
+  const follows = await prisma.follow.findMany({
+    where: { token },
+    select: { userId: true },
+  });
+  const ids = follows.map((f) => f.userId);
+  if (ids.length === 0) return [];
+  return prisma.rankEvent.findMany({
+    where: { userId: { in: ids } },
+    orderBy: { at: "desc" },
+    take: limit,
   });
 }
 

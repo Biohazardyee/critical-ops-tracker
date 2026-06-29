@@ -43,3 +43,29 @@ model Snapshot {
 
   @@index([userId, takenAt])
 }
+
+/// A rank / MMR change detected by the worker — surfaced as in-app notifications.
+model RankEvent {
+  id      Int      @id @default(autoincrement())
+  userId  String
+  name    String
+  at      DateTime @default(now())
+  kind    String // "rank_up" | "rank_down" | "mmr"
+  oldRank Int
+  newRank Int
+  oldMmr  Int
+  newMmr  Int
+
+  @@index([userId, at])
+}
+
+/// A device token following a player (drives the per-token notification feed).
+model Follow {
+  token     String
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+
+  @@id([token, userId])
+  @@index([token])
+}

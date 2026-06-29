@@ -5,6 +5,7 @@ import { CopsApiError } from "@cops/core";
 import { serverRoutes } from "./routes/servers.js";
 import { playerRoutes } from "./routes/player.js";
 import { leaderboardRoutes } from "./routes/leaderboard.js";
+import { eventsRoutes } from "./routes/events.js";
 
 const app = Fastify({ logger: true });
 
@@ -14,6 +15,7 @@ app.get("/api/health", async () => ({ ok: true, service: "cops-api" }));
 await app.register(serverRoutes, { prefix: "/api" });
 await app.register(playerRoutes, { prefix: "/api" });
 await app.register(leaderboardRoutes, { prefix: "/api" });
+await app.register(eventsRoutes, { prefix: "/api" });
 
 app.setErrorHandler((err, _req, reply) => {
   if (err instanceof CopsApiError) {
