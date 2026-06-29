@@ -67,9 +67,26 @@
         }
       }
     </script>
+    <style>
+      body {
+        margin: 0;
+        background: #0a0c10;
+        color: #e7ebf2;
+        font-family: system-ui, sans-serif;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Fallback content for crawlers that don't run JS (React replaces it on mount). -->
+    <div id="root">
+      <main style="max-width: 56rem; margin: 0 auto; padding: 2.5rem 1rem">
+        <h1>Critical Ops Tracker — Stats, Ranks &amp; Leaderboard</h1>
+        <p>
+          Look up any Critical Ops player's rank, MMR, K/D and season history,
+          and browse the global Elite Ops, Ranked, Kills and Clan leaderboards.
+        </p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
