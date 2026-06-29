@@ -1,0 +1,8 @@
+# Caddy auto-HTTPS for the tracker. DOMAIN comes from the environment
+# (see docker-compose.yml -> caddy service, set DOMAIN in .env).
+# Requires the domain's DNS A record to point at this server, and ports
+# 80 + 443 to be free/reachable.
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy web:80
+}

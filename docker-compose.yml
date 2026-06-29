@@ -92,5 +92,26 @@ services:
       api:
         condition: service_healthy
 
+  # Optional reverse proxy with automatic HTTPS (Let's Encrypt).
+  # Enable with: docker compose --profile proxy up -d
+  # Requires DOMAIN set in .env, its DNS A record pointing here, and 80/443 free.
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["proxy"]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-cops.melodia.cloud}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
 volumes:
   pgdata:
+  caddy_data:
+  caddy_config:
